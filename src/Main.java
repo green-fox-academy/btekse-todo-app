@@ -2,11 +2,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
-  public final static String FILE_NAME = "tasks.csv";
+  public final static String FILE_NAME = "tasks";
 
   public static void main(String[] args) {
     if (args.length == 0) {
@@ -27,8 +26,8 @@ public class Main {
         " -c   Completes an task");
     } else if (args[0].equals("-l")) {
       listAllTasks();
-    } else if (args[0].equals("-a") && args.length == 2) {
-      addNewTask(args[1]);
+    } else if (args[0].equals("-a")) {
+      addNewTask(args);
     } /*else if (args[0].equals("-r")) {
       removeTask(Integer.parseInt(args[1]));
     } else if(args[0].equals("-c")) {
@@ -54,7 +53,7 @@ public class Main {
 
   public static String isDoneToString(String task) {
     String[] subList = task.split(";");
-    if (subList[1].equals("done")) {
+    if (subList.length > 1 && subList[1].equals("done")) {
       return "[X]";
     } else {
       return "[ ]";
@@ -66,17 +65,32 @@ public class Main {
     return subTasks[0];
   }
 
-  public static void addNewTask(String task) {
-    Path tasks = Paths.get(FILE_NAME);
-    try {
-      List<String> taskList = Files.readAllLines(tasks);
-      String finalTask = task + ";pending";
-      taskList.add(finalTask);
-      Files.write(tasks, taskList);
-    } catch (IOException e) {
-      System.out.println("Something wrong with tasks.csv file");
+  public static void addNewTask(String[] task) {
+    if (task.length >= 2) {
+      String finalTask = convertArrayToString(task);
+      Path fileTask = Paths.get(FILE_NAME);
+      try {
+        List<String> taskList = Files.readAllLines(fileTask);
+
+        taskList.add(finalTask);
+        Files.write(fileTask, taskList);
+      } catch (IOException e) {
+        System.out.println("Something wrong with tasks.csv file");
+      }
+    } else {
+      System.out.println("Task missing\nMain -a <task>");
     }
   }
+
+  private static String convertArrayToString(String[] task) {
+    String finalTask = "";
+    for (int i = 1; i < task.length; i++) {
+      finalTask += " " + task[i];
+    }
+    finalTask = finalTask.trim();
+    return finalTask;
+  }
+
   /*
     private static void completeTask() {
   }
@@ -85,3 +99,4 @@ public class Main {
   }
 */
 }
+
