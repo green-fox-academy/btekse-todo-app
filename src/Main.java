@@ -5,7 +5,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class Main {
-  public final static String FILE_NAME = "tasks";
+  public final static String FILE_NAME = "tasks.txt";
 
   public static void main(String[] args) {
     if (args.length == 0) {
@@ -20,13 +20,14 @@ public class Main {
       listAllTasks();
     } else if (args[0].equals("-a")) {
       addNewTask(args);
-    } /*else if (args[0].equals("-r")) {
-      removeTask(Integer.parseInt(args[1]));
-    } else if(args[0].equals("-c")) {
-      completeTask();
-    }*/
+    } else if (args[0].equals("-r")) {
+      removeTask(args);
+    } /*else if (args[0].equals("-c")) {
+      checkTask(args);
+      } */else {
+      System.out.println("Unknown argument");
+    }
   }
-
   private static void listAllTasks() {
     Path listAll = Paths.get(FILE_NAME);
     try {
@@ -39,7 +40,7 @@ public class Main {
         }
       }
     } catch (IOException e) {
-      System.out.println("Something wrong with tasks.csv file");
+      System.out.println("Something wrong with tasks.txt file");
     }
   }
 
@@ -63,11 +64,10 @@ public class Main {
       Path fileTask = Paths.get(FILE_NAME);
       try {
         List<String> taskList = Files.readAllLines(fileTask);
-
         taskList.add(finalTask);
         Files.write(fileTask, taskList);
       } catch (IOException e) {
-        System.out.println("Something wrong with tasks.csv file");
+        System.out.println("Something wrong with tasks.txt file");
       }
     } else {
       System.out.println("Task missing\nMain -a <task>");
@@ -83,12 +83,39 @@ public class Main {
     return finalTask;
   }
 
-  /*
-    private static void completeTask() {
+  private static void removeTask(String[] task) {
+    if (task.length >= 2) {
+      String finalTask = convertArrayToString(task);
+      Path fileTask = Paths.get(FILE_NAME);
+      try {
+        List<String> taskList = Files.readAllLines(fileTask);
+        taskList.remove(finalTask);
+        Files.write(fileTask, taskList);
+      } catch (IOException e) {
+        System.out.println("Something wrong with tasks.txt file");
+      }
+    } else {
+      System.out.println("Task missing\nMain -a <task>");
+    }
   }
 
-  private static void removeTask(int i) {
-  }
-*/
+  /*private static void checkTask(String[] task) {
+    if (task.length >= 2) {
+      String finalTask = convertArrayToString(task);
+      Path fileTask = Paths.get(FILE_NAME);
+      try {
+        List<String> taskList = Files.readAllLines(fileTask);
+        if (taskList.equals("done")) {
+          System.out.println("The " + taskList + "\n task is done.");
+        } else {
+          System.out.println("The " + taskList + "\n task is not completed.");
+        }
+      } catch (IOException e) {
+        System.out.println("Something wrong with tasks.txt file");
+      }
+    } else {
+      System.out.println("Task missing\nMain -c <task>");
+    }
+  }*/
 }
 
